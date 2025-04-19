@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import { FolderOpen, Github, Link as LinkIcon } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -59,26 +59,23 @@ const Projects = () => {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-8">
-          {projects.map((project, index) => (
-            <Card key={index} className="bg-gray-800/50 border-gray-700 overflow-hidden">
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="md:col-span-1">
-                  <img 
-                    src={project.imageUrl} 
-                    alt={project.title}
-                    className="w-full h-48 object-cover rounded-l-lg"
-                  />
-                </div>
-                <div className="md:col-span-2 p-6">
-                  <CardHeader className="p-0 mb-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-green-400 mb-2">{project.title}</CardTitle>
-                        <CardDescription className="text-gray-300">
-                          {project.description}
-                        </CardDescription>
-                      </div>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project, index) => {
+            const projectUrl = `/project/${project.title.toLowerCase().replace(/\s+/g, '-')}`;
+            
+            return (
+              <Link key={index} to={projectUrl}>
+                <Card className="bg-gray-800/50 border-gray-700 h-full hover:bg-gray-800/70 transition-colors">
+                  <div className="aspect-video">
+                    <img 
+                      src={project.imageUrl} 
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <CardHeader className="p-6">
+                    <div className="flex items-start justify-between mb-2">
+                      <CardTitle className="text-green-400">{project.title}</CardTitle>
                       <span className={`text-xs px-2 py-1 rounded ${
                         project.status === 'Live' ? 'bg-green-500/20 text-green-400' :
                         project.status === 'In Progress' ? 'bg-blue-500/20 text-blue-400' :
@@ -87,44 +84,28 @@ const Projects = () => {
                         {project.status}
                       </span>
                     </div>
+                    <CardDescription className="text-gray-300">
+                      {project.description}
+                    </CardDescription>
                   </CardHeader>
-                  
-                  <CardContent className="p-0">
-                    <p className="text-gray-300 mb-4">
-                      {project.longDescription}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tech.map((tech, i) => (
+                  <CardContent className="p-6 pt-0">
+                    <div className="flex flex-wrap gap-2">
+                      {project.tech.slice(0, 3).map((tech, i) => (
                         <span key={i} className="text-xs bg-gray-700/50 px-2 py-1 rounded">
                           {tech}
                         </span>
                       ))}
-                    </div>
-
-                    <div className="flex gap-3 mt-4">
-                      {project.githubUrl && (
-                        <Button variant="outline" size="sm" className="gap-2" asChild>
-                          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                            <Github className="w-4 h-4" />
-                            Source
-                          </a>
-                        </Button>
-                      )}
-                      {project.liveUrl && (
-                        <Button variant="outline" size="sm" className="gap-2" asChild>
-                          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                            <LinkIcon className="w-4 h-4" />
-                            Live Demo
-                          </a>
-                        </Button>
+                      {project.tech.length > 3 && (
+                        <span className="text-xs bg-gray-700/50 px-2 py-1 rounded">
+                          +{project.tech.length - 3}
+                        </span>
                       )}
                     </div>
                   </CardContent>
-                </div>
-              </div>
-            </Card>
-          ))}
+                </Card>
+              </Link>
+            );
+          })}
         </section>
       </main>
     </div>
