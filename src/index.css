@@ -1,11 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -96,6 +98,29 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#1A1F2C] text-[#F6F6F7] font-mono;
   }
+}
+
+.terminal-text {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.nav-link {
+  @apply relative text-gray-400 hover:text-white transition-colors duration-200;
+}
+
+.nav-link::before {
+  content: '/';
+  @apply text-green-400 mr-1;
+}
+
+.active-link {
+  @apply text-white;
 }
