@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: personal-portfolio
+    env: go
+    buildCommand: go build -o server ./cmd/server
+    startCommand: ./server
+    envVars:
+      - key: PORT
+        value: 8080 

@@ -1,0 +1,20 @@
+{{ define "album_content" }}
+<div class="album-header">
+    <h1 class="section-title">
+        <i class="fas fa-camera"></i>
+        {{.Album.Title}}
+    </h1>
+    <p class="section-description">{{.Album.Description}}</p>
+</div>
+
+<div class="photo-grid">
+    {{range .Album.Photos}}
+    <div class="photo-item">
+        <img src="{{.URL}}" alt="{{.Description}}">
+        <div class="photo-overlay">
+            <span class="photo-name">{{.Description}}</span>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{ end }} 

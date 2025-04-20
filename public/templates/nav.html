@@ -1,0 +1,11 @@
+{{ define "nav" }}
+<nav class="navigation">
+    <div class="nav-links">
+        <a href="/" class="nav-link {{if eq .CurrentPage "home"}}active{{end}}">/ home</a>
+        <a href="/photography" class="nav-link {{if eq .CurrentPage "photography"}}active{{end}}">/ photography</a>
+        <a href="/projects" class="nav-link {{if eq .CurrentPage "projects"}}active{{end}}">/ projects</a>
+        <!-- <a href="/hobbies" class="nav-link {{if eq .CurrentPage "hobbies"}}active{{end}}">/ hobbies</a> -->
+        <a href="/about" class="nav-link {{if eq .CurrentPage "about"}}active{{end}}">/ about</a>
+    </div>
+</nav>
+{{ end }} 

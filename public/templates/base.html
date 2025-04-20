@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="status-bar">
+        <div class="status-line">
+            <span>{{.RequestInfo.Protocol}} 200 OK</span>
+            <span>Last-Modified: {{.RequestInfo.LastModified}}</span>
+            <span>Content-Length: {{.RequestInfo.ContentLength}}</span>
+            <span>Content-Type: {{.RequestInfo.ContentType}}</span>
+            <span>Date: {{.RequestInfo.Date}}</span>
+        </div>
+        <div class="request-line">
+            <span class="request-method">{{.RequestInfo.Method}}</span>
+            <span class="request-url">{{if eq .RequestInfo.URL "/"}}https://dazzle.io/{{else}}https://dazzle.io{{.RequestInfo.URL}}{{end}}</span>
+            <span class="request-version">{{.RequestInfo.Protocol}}</span>
+            <span>Host: {{.RequestInfo.Host}}</span>
+            <span>Accept: application/json</span>
+            <span>User-Agent: {{.RequestInfo.UserAgent}}</span>
+        </div>
+    </div>
+
+    {{template "nav" .}}
+
+    <main>
+        {{template "content" .}}
+    </main>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()" title="Close image">
+                <i class="fas fa-times"></i>
+            </button>
+            <img class="modal-image" id="modalImage" src="" alt="Modal Image">
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        // Wait for DOM content to be loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+
+            // Add click event to all photo items and their images
+            document.querySelectorAll('.photo-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const img = this.querySelector('img');
+                    if (img) {
+                        modal.classList.add('show');
+                        modalImg.src = img.src;
+                        modalImg.alt = img.alt || 'Modal Image';
+                    }
+                });
+            });
+
+            // Close modal
+            function closeModal() {
+                modal.classList.remove('show');
+            }
+
+            // Add click handler to close button
+            document.querySelector('.modal-close').addEventListener('click', closeModal);
+
+            // Close modal when clicking outside the image
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Close modal with escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
