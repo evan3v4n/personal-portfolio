@@ -5,6 +5,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
@@ -12,6 +15,7 @@ import (
 type PageData struct {
 	CurrentPage string
 	Title       string
+	Photos      []Photo
 	RequestInfo struct {
 		Method        string
 		URL           string
@@ -28,6 +32,7 @@ type PageData struct {
 type Photo struct {
 	URL         string
 	Description string
+	ModTime     time.Time
 }
 
 type Album struct {
@@ -41,6 +46,54 @@ type Album struct {
 type AlbumPageData struct {
 	PageData
 	Album Album
+}
+
+func getPhotographyImages(limit int) ([]Photo, error) {
+	photos := []Photo{}
+
+	// Read the photography directory
+	files, err := os.ReadDir("public/images/photography")
+	if err != nil {
+		log.Printf("Error reading photography directory: %v", err)
+		return nil, err
+	}
+
+	log.Printf("Found %d files in photography directory", len(files))
+
+	// Add each image to the photos slice
+	for _, file := range files {
+		// Convert filename to lowercase for extension check
+		lowerName := strings.ToLower(file.Name())
+		if !file.IsDir() && (strings.HasSuffix(lowerName, ".jpg") || strings.HasSuffix(lowerName, ".jpeg") || strings.HasSuffix(lowerName, ".png")) {
+			// Get file info to get modification time
+			fileInfo, err := file.Info()
+			if err != nil {
+				log.Printf("Error getting file info for %s: %v", file.Name(), err)
+				continue
+			}
+
+			photo := Photo{
+				URL:         "/images/photography/" + file.Name(),
+				Description: strings.TrimSuffix(file.Name(), filepath.Ext(file.Name())),
+				ModTime:     fileInfo.ModTime(),
+			}
+			photos = append(photos, photo)
+			log.Printf("Added photo: %+v", photo)
+		}
+	}
+
+	// Sort photos by modification time, most recent first
+	sort.Slice(photos, func(i, j int) bool {
+		return photos[i].ModTime.After(photos[j].ModTime)
+	})
+
+	// Limit the number of photos if requested
+	if limit > 0 && len(photos) > limit {
+		photos = photos[:limit]
+	}
+
+	log.Printf("Total photos returned: %d", len(photos))
+	return photos, nil
 }
 
 func main() {
@@ -145,19 +198,43 @@ func main() {
 			}
 		}
 
+		// Get photography images
+		var photos []Photo
+		var err error
+		if currentPage == "home" {
+			photos, err = getPhotographyImages(3) // Only 3 most recent for home page
+		} else {
+			photos, err = getPhotographyImages(0) // All photos for photography page
+		}
+		if err != nil {
+			log.Printf("Error reading photography images: %v", err)
+		} else {
+			log.Printf("Successfully loaded %d photos for page: %s", len(photos), currentPage)
+		}
+
 		// Create page data
 		data := PageData{
 			CurrentPage: currentPage,
 			Title:       strings.Title(currentPage) + " - Portfolio",
+			Photos:      photos,
 			RequestInfo: requestInfo,
 		}
 
-		// Define the content template for the current page
-		contentTemplate := fmt.Sprintf(`{{define "content"}}{{template "%s-content" .}}{{end}}`, currentPage)
-		tmpl := template.Must(template.Must(templates.Clone()).Parse(contentTemplate))
+		// Parse the specific page template
+		pageTemplate := fmt.Sprintf("%s.html", currentPage)
+		tmpl, err := template.ParseFiles(
+			"public/templates/base.html",
+			"public/templates/nav.html",
+			fmt.Sprintf("public/templates/%s", pageTemplate),
+		)
+		if err != nil {
+			log.Printf("Error parsing templates: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 
 		// Execute template
-		err := tmpl.ExecuteTemplate(w, "base.html", data)
+		err = tmpl.ExecuteTemplate(w, "base.html", data)
 		if err != nil {
 			log.Printf("Error executing template: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)

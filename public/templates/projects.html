@@ -1,31 +1,197 @@
-{{ define "projects-content" }}
+{{ define "content" }}
 <section class="projects-intro">
     <h2 class="section-title">> Projects</h2>
     <p class="section-description">
-        Here are some of the projects I've worked on. Each project represents a unique challenge and learning opportunity.
+        Collection of projects I've worked on.
     </p>
 </section>
 
 <div class="projects-grid">
-    <div class="project-card">
-        <div class="project-image">
-            <img src="images/project1.jpg" alt="Project 1">
+    <div class="project-card" data-project="1">
+        <h3 class="project-title">evancs.ca</h3>
+        <div class="project-tech">
+            <span class="tech-tag">GoLang | Docker | JavaScript | HTML / CSS</span>
         </div>
-        <div class="project-content">
-            <div class="project-header">
-                <h3 class="project-title">Project 1</h3>
-                <span class="project-status status-live">Live</span>
+        <div class="project-description-preview">
+            Personal website, also self hosted with a Golang server.
+        </div>
+        <div class="project-description" style="display: none;">
+            The server is a Go-based web application that serves a 
+            personal portfolio website with a terminal-inspired interface. 
+            It uses Go's standard http package to handle requests, serving 
+            static files from the public directory and rendering HTML 
+            templates for different pages. The server features a 
+            photography gallery that dynamically reads and sorts images 
+            and implements security headers and timeouts for protection. 
+            It tracks detailed request information that is displayed in the status bar.
+        </div>
+        <div class="project-images" style="display: none;">
+            <div class="image-container">
+                <img src="/images/project1.jpg" alt="Project 1" class="active">
+                <img src="/images/project1-2.jpg" alt="Project 1 - Additional View" style="display: none;">
+                <img src="/images/project1-3.jpg" alt="Project 1 - Additional View" style="display: none;">
             </div>
-            <p class="project-description">
-                A brief description of the project and its goals.
-            </p>
-            <div class="project-tech">
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Node.js</span>
-                <span class="tech-tag">MongoDB</span>
+            <div class="image-navigation">
+                <button class="prev-image">←</button>
+                <div class="image-dots"></div>
+                <button class="next-image">→</button>
             </div>
+        </div>
+        <div class="project-links" style="display: none;">
+            <a href="https://github.com/evan3v4n/personal-portfolio" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://evancs.ca" target="_blank" rel="noopener noreferrer">Live Demo</a>
         </div>
     </div>
-    <!-- Add more project cards as needed -->
+
+    <div class="project-card" data-project="2">
+        <h3 class="project-title">project_2.py</h3>
+        <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Django</span>
+            <span class="tech-tag">PostgreSQL</span>
+        </div>
+        <div class="project-description-preview">
+            Backend implementation with RESTful API endpoints, database optimization, and automated testing.
+        </div>
+        <div class="project-description" style="display: none;">
+            This is a description of Project 2. It demonstrates my expertise in Python, Django, and PostgreSQL. The project includes features like RESTful API endpoints, database optimization, and automated testing.
+        </div>
+        <div class="project-images" style="display: none;">
+            <div class="image-container">
+                <img src="/images/project2.jpg" alt="Project 2" class="active">
+                <img src="/images/project2-2.jpg" alt="Project 2 - Additional View" style="display: none;">
+                <img src="/images/project2-3.jpg" alt="Project 2 - Additional View" style="display: none;">
+            </div>
+            <div class="image-navigation">
+                <button class="prev-image">←</button>
+                <div class="image-dots"></div>
+                <button class="next-image">→</button>
+            </div>
+        </div>
+        <div class="project-links" style="display: none;">
+            <a href="https://github.com/yourusername/project2" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://project2-demo.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
+        </div>
+    </div>
+
+    <div class="project-card" data-project="3">
+        <h3 class="project-title">project_3.js</h3>
+        <div class="project-tech">
+            <span class="tech-tag">JavaScript</span>
+            <span class="tech-tag">Express</span>
+            <span class="tech-tag">MySQL</span>
+        </div>
+        <div class="project-description-preview">
+            Features include user management, data visualization, and third-party API integration.
+        </div>
+        <div class="project-description" style="display: none;">
+            This is a description of Project 3. It highlights my work with JavaScript, Express, and MySQL. The project features include user management, data visualization, and API integration.
+        </div>
+        <div class="project-images" style="display: none;">
+            <div class="image-container">
+                <img src="/images/photography/S+M.JPG" alt="Project 3" class="active">
+                <img src="/images/project3-2.jpg" alt="Project 3 - Additional View" style="display: none;">
+                <img src="/images/project3-3.jpg" alt="Project 3 - Additional View" style="display: none;">
+            </div>
+            <div class="image-navigation">
+                <button class="prev-image">←</button>
+                <div class="image-dots"></div>
+                <button class="next-image">→</button>
+            </div>
+        </div>
+        <div class="project-links" style="display: none;">
+            <a href="https://github.com/yourusername/project3" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://project3-demo.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
+        </div>
+    </div>
+
+    <div class="project-card" data-project="4">
+        <h3 class="project-title">project_4.js</h3>
+        <div class="project-tech">
+            <span class="tech-tag">JavaScript</span>
+            <span class="tech-tag">Express</span>
+            <span class="tech-tag">MySQL</span>
+        </div>
+        <div class="project-description-preview">
+            Full-stack application with interactive dashboards and real-time data updates.
+        </div>
+        <div class="project-description" style="display: none;">
+            This is a description of Project 4. It highlights my work with JavaScript, Express, and MySQL. The project features include user management, data visualization, and API integration.
+        </div>
+        <div class="project-images" style="display: none;">
+            <div class="image-container">
+                <img src="/images/project4.jpg" alt="Project 4" class="active">
+                <img src="/images/project4-2.jpg" alt="Project 4 - Additional View" style="display: none;">
+                <img src="/images/project4-3.jpg" alt="Project 4 - Additional View" style="display: none;">
+            </div>
+            <div class="image-navigation">
+                <button class="prev-image">←</button>
+                <div class="image-dots"></div>
+                <button class="next-image">→</button>
+            </div>
+        </div>
+        <div class="project-links" style="display: none;">
+            <a href="https://github.com/yourusername/project4" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://project4-demo.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
+        </div>
+    </div>
 </div>
+
+<script>
+    console.log('Projects template loaded');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add CRT effect functionality
+        const scanlineEffect = document.createElement('div');
+        scanlineEffect.classList.add('crt-scanlines');
+        document.body.appendChild(scanlineEffect);
+        
+        console.log('Projects DOMContentLoaded event fired');
+        
+        // Initialize image carousels for each project
+        document.querySelectorAll('.project-card').forEach(card => {
+            const images = card.querySelectorAll('.image-container img');
+            const dotsContainer = card.querySelector('.image-dots');
+            const prevButton = card.querySelector('.prev-image');
+            const nextButton = card.querySelector('.next-image');
+            
+            // Create dots for each image
+            images.forEach((_, index) => {
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dotsContainer.appendChild(dot);
+            });
+            
+            const dots = card.querySelectorAll('.dot');
+            let currentImageIndex = 0;
+            
+            function showImage(index) {
+                images.forEach((img, i) => {
+                    img.style.display = i === index ? 'block' : 'none';
+                    img.classList.toggle('active', i === index);
+                });
+                
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+                
+                currentImageIndex = index;
+            }
+            
+            prevButton.addEventListener('click', () => {
+                const newIndex = (currentImageIndex - 1 + images.length) % images.length;
+                showImage(newIndex);
+            });
+            
+            nextButton.addEventListener('click', () => {
+                const newIndex = (currentImageIndex + 1) % images.length;
+                showImage(newIndex);
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => showImage(index));
+            });
+        });
+    });
+</script>
 {{ end }} 

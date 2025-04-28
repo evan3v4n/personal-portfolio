@@ -1,5 +1,8 @@
 {{ define "nav" }}
 <nav class="navigation">
+    <button class="mobile-menu-button" aria-label="Toggle navigation menu">
+        <i class="fas fa-bars"></i>
+    </button>
     <div class="nav-links">
         <a href="/" class="nav-link {{if eq .CurrentPage "home"}}active{{end}}">/ home</a>
         <a href="/photography" class="nav-link {{if eq .CurrentPage "photography"}}active{{end}}">/ photography</a>
@@ -8,4 +11,5 @@
         <a href="/about" class="nav-link {{if eq .CurrentPage "about"}}active{{end}}">/ about</a>
     </div>
 </nav>
+<script src="/js/navigation.js"></script>
 {{ end }} 

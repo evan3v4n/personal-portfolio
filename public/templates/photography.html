@@ -1,29 +1,19 @@
-{{ define "photography-content" }}
+{{ define "content" }}
 <section class="photography-intro">
     <h2 class="section-title">> Photography</h2>
     <p class="section-description">
-        A collection of my recent photography work. Each image tells a story and captures a moment in time.
+        Here are some of my favorite photos I've taken.
     </p>
 </section>
 
 <div class="photo-grid">
+    {{range .Photos}}
     <div class="photo-item">
-        <img src="/images/photography/sunset.jpg" alt="Sunset at the Beach">
+        <img src="{{.URL}}" alt="{{.Description}}">
         <div class="photo-overlay">
-            <span class="photo-name">Sunset at the Beach</span>
+            <span class="photo-name">{{.Description}}</span>
         </div>
     </div>
-    <div class="photo-item">
-        <img src="/images/photography/mountain.jpg" alt="Mountain View">
-        <div class="photo-overlay">
-            <span class="photo-name">Mountain View</span>
-        </div>
-    </div>
-    <div class="photo-item">
-        <img src="/images/photography/city.jpg" alt="City Lights">
-        <div class="photo-overlay">
-            <span class="photo-name">City Lights</span>
-        </div>
-    </div>
+    {{end}}
 </div>
 {{ end }} 
