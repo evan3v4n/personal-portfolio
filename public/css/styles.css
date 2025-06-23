@@ -861,14 +861,14 @@ main {
 .modal-content {
     background: var(--secondary-color);
     margin: auto;
-    padding: 2.5rem;
+    padding: 1rem;
     border-radius: 8px;
-    max-width: 900px;
-    width: 90%;
-    max-height: 90vh;
+    max-width: 1000px;
+    width: 95%;
+    max-height: 95vh;
     overflow-y: auto;
     position: relative;
-    border: 1px solid var(--border-color);
+    /* border: 1px solid var(--border-color); */
 }
 
 .modal-close {
@@ -906,11 +906,13 @@ main {
 
 .modal-image {
     width: 100%;
-    max-height: 450px;
-    object-fit: cover;
+    max-height: 700px;
+    object-fit: contain;
     border-radius: 8px;
     margin-bottom: 2rem;
-    border: 1px solid var(--border-color);
+    /* border: 1px solid var(--border-color); */
+    display: block;
+    background: var(--secondary-color); /* seamless with modal */
 }
 
 .modal-links {

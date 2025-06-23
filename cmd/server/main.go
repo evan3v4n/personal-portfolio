@@ -244,7 +244,7 @@ func main() {
 
 	// Create server with timeouts
 	server := &http.Server{
-		Addr:         ":8080",
+		Addr:         ":" + getPort(),
 		Handler:      mux,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
@@ -255,4 +255,12 @@ func main() {
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getPort() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback for local dev
+	}
+	return port
 }
