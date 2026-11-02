@@ -1,19 +1,15 @@
 {{ define "content" }}
 <section class="photography-intro">
-    <h2 class="section-title">> Photography</h2>
-    <p class="section-description">
-        Here are some of my favorite photos I've taken.
-    </p>
+    <h1 class="section-title">&gt; Photography</h1>
+    <p class="section-description">Some of my favorite photos I've taken. Tap any photo to view it larger.</p>
 </section>
 
 <div class="photo-grid">
     {{range .Photos}}
-    <div class="photo-item">
+    <figure class="photo-item">
         <img src="{{.URL}}" alt="{{.Description}}" loading="lazy" decoding="async">
-        <div class="photo-overlay">
-            <span class="photo-name">{{.Description}}</span>
-        </div>
-    </div>
+        <figcaption class="photo-name">{{.Description}}</figcaption>
+    </figure>
     {{end}}
 </div>
-{{ end }} 
+{{ end }}

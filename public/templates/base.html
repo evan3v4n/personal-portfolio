@@ -4,35 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/static/css/projects.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <!-- Debug Info -->
-    <div style="display: none;">
-        Current Page: {{.CurrentPage}}
-        Photos Count: {{len .Photos}}
-    </div>
-
-    <div class="status-bar">
-        <div class="status-line">
-            <span>{{.RequestInfo.Protocol}} 200 OK</span>
-            <span>Last-Modified: {{.RequestInfo.LastModified}}</span>
-            <span>Content-Length: {{.RequestInfo.ContentLength}}</span>
-            <span>Content-Type: {{.RequestInfo.ContentType}}</span>
-            <span>Date: {{.RequestInfo.Date}}</span>
-        </div>
-        <div class="request-line">
+    <header class="http-bar">
+        <p class="request-line">
             <span class="request-method">{{.RequestInfo.Method}}</span>
-            <span class="request-url">{{if eq .RequestInfo.URL "/"}}https://evancs.ca/{{else}}https://evancs.ca{{.RequestInfo.URL}}{{end}}</span>
+            <span class="request-url">https://evancs.ca{{.RequestInfo.URL}}</span>
             <span class="request-version">{{.RequestInfo.Protocol}}</span>
-            <span>Host: {{.RequestInfo.Host}}</span>
-            <span>Accept: application/json</span>
-            <span>User-Agent: {{.RequestInfo.UserAgent}}</span>
-        </div>
-    </div>
+        </p>
+        <details class="response" id="response">
+            <summary>{{.RequestInfo.Protocol}} {{.RequestInfo.Status}}</summary>
+            <dl class="response-headers">
+                <div><dt>Content-Type:</dt><dd>{{.RequestInfo.ContentType}}</dd></div>
+                <div><dt>Content-Length:</dt><dd>{{.RequestInfo.ContentLength}}</dd></div>
+                <div><dt>Last-Modified:</dt><dd>{{.RequestInfo.LastModified}}</dd></div>
+                <div><dt>Date:</dt><dd>{{.RequestInfo.Date}}</dd></div>
+            </dl>
+        </details>
+    </header>
 
     {{template "nav" .}}
 
@@ -40,42 +34,16 @@
         {{template "content" .}}
     </main>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()" title="Close image">
-                <i class="fas fa-times"></i>
-            </button>
-            <img class="modal-image" id="modalImage" src="" alt="Modal Image">
-        </div>
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+        <button class="lightbox-btn lightbox-close" aria-label="Close"><i class="fas fa-times"></i></button>
+        <button class="lightbox-btn lightbox-prev" aria-label="Previous photo"><i class="fas fa-chevron-left"></i></button>
+        <figure>
+            <img id="lightboxImg" src="" alt="">
+            <figcaption id="lightboxCaption"></figcaption>
+        </figure>
+        <button class="lightbox-btn lightbox-next" aria-label="Next photo"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- Project Modal -->
-    <div id="projectModal" class="modal">
-        <div class="modal-content project-modal-content">
-            <div class="terminal-header">
-                <button class="modal-close" title="Close terminal"></button>
-            </div>
-            <div class="project-modal-header">
-                <h2 class="modal-title"></h2>
-            </div>
-            <div class="project-modal-body">
-                <div class="project-modal-details">
-                    <div class="modal-tech"></div>
-                    <p class="modal-description"></p>
-                </div>
-                <div class="project-modal-image">
-                    <img class="modal-image" src="" alt="">
-                </div>
-                <div class="modal-links"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Debug function to check if JavaScript is loaded
-        console.log('Base template JavaScript loaded');
-    </script>
     <script src="/js/main.js"></script>
 </body>
-</html> 
+</html>

@@ -1,15 +1,6 @@
 {{ define "nav" }}
-<nav class="navigation">
-    <button class="mobile-menu-button" aria-label="Toggle navigation menu">
-        <i class="fas fa-bars"></i>
-    </button>
-    <div class="nav-links">
-        <a href="/" class="nav-link {{if eq .CurrentPage "home"}}active{{end}}">/ home</a>
-        <a href="/photography" class="nav-link {{if eq .CurrentPage "photography"}}active{{end}}">/ photography</a>
-        <!-- <a href="/projects" class="nav-link {{if eq .CurrentPage "projects"}}active{{end}}">/ projects</a> -->
-        <!-- <a href="/hobbies" class="nav-link {{if eq .CurrentPage "hobbies"}}active{{end}}">/ hobbies</a> -->
-        <!-- <a href="/about" class="nav-link {{if eq .CurrentPage "about"}}active{{end}}">/ about</a> -->
-    </div>
+<nav class="navigation" aria-label="Main">
+    <a href="/" class="nav-link {{if eq .CurrentPage "home"}}active{{end}}">/ home</a>
+    <a href="/photography" class="nav-link {{if eq .CurrentPage "photography"}}active{{end}}">/ photography</a>
 </nav>
-<script src="/js/navigation.js"></script>
-{{ end }} 
+{{ end }}
