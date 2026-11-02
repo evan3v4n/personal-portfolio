@@ -10,7 +10,7 @@
 <div class="photo-grid">
     {{range .Album.Photos}}
     <div class="photo-item">
-        <img src="{{.URL}}" alt="{{.Description}}">
+        <img src="{{.URL}}" alt="{{.Description}}" loading="lazy" decoding="async">
         <div class="photo-overlay">
             <span class="photo-name">{{.Description}}</span>
         </div>
