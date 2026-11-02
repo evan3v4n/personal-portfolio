@@ -1,197 +1,175 @@
 {{ define "content" }}
 <section class="projects-intro">
     <h2 class="section-title">> Projects</h2>
-    <p class="section-description">
-        Collection of projects I've worked on.
-    </p>
 </section>
 
-<div class="projects-grid">
-    <div class="project-card" data-project="1">
-        <h3 class="project-title">evancs.ca</h3>
-        <div class="project-tech">
-            <span class="tech-tag">GoLang | Docker | JavaScript | HTML / CSS</span>
+<div class="project-list">
+    <article class="project-tile" tabindex="0" role="button" aria-label="Open Concurrent HTTP Server details">
+        <div class="window-bar" aria-hidden="true">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="window-title">~/projects/concurrent-http-server</span>
         </div>
-        <div class="project-description-preview">
-            Personal website, also self hosted with a Golang server.
+        <figure class="project-shot">
+            <img src="/images/projects/concurrent-http-server.png" alt="Dashboard of the concurrent HTTP server showing worker pool activity" loading="lazy">
+        </figure>
+        <div class="project-body">
+            <h3 class="project-name">Concurrent HTTP Server</h3>
+            <ul class="tech-tags"><li>Go</li><li>React</li><li>TypeScript</li><li>SSE</li></ul>
+            <p>
+                A concurrent Go HTTP server with a configurable worker-goroutine pool,
+                buffered request queue, backpressure, asynchronous logging and graceful
+                shutdown, plus a React/TypeScript dashboard for real-time monitoring over
+                server-sent events.
+            </p>
+            <span class="more-hint">click for details &rarr;</span>
         </div>
-        <div class="project-description" style="display: none;">
-            The server is a Go-based web application that serves a 
-            personal portfolio website with a terminal-inspired interface. 
-            It uses Go's standard http package to handle requests, serving 
-            static files from the public directory and rendering HTML 
-            templates for different pages. The server features a 
-            photography gallery that dynamically reads and sorts images 
-            and implements security headers and timeouts for protection. 
-            It tracks detailed request information that is displayed in the status bar.
-        </div>
-        <div class="project-images" style="display: none;">
-            <div class="image-container">
-                <img src="/images/project1.jpg" alt="Project 1" class="active">
-                <img src="/images/project1-2.jpg" alt="Project 1 - Additional View" style="display: none;">
-                <img src="/images/project1-3.jpg" alt="Project 1 - Additional View" style="display: none;">
-            </div>
-            <div class="image-navigation">
-                <button class="prev-image">←</button>
-                <div class="image-dots"></div>
-                <button class="next-image">→</button>
-            </div>
-        </div>
-        <div class="project-links" style="display: none;">
-            <a href="https://github.com/evan3v4n/personal-portfolio" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://evancs.ca" target="_blank" rel="noopener noreferrer">Live Demo</a>
-        </div>
-    </div>
 
-    <div class="project-card" data-project="2">
-        <h3 class="project-title">project_2.py</h3>
-        <div class="project-tech">
-            <span class="tech-tag">Python</span>
-            <span class="tech-tag">Django</span>
-            <span class="tech-tag">PostgreSQL</span>
-        </div>
-        <div class="project-description-preview">
-            Backend implementation with RESTful API endpoints, database optimization, and automated testing.
-        </div>
-        <div class="project-description" style="display: none;">
-            This is a description of Project 2. It demonstrates my expertise in Python, Django, and PostgreSQL. The project includes features like RESTful API endpoints, database optimization, and automated testing.
-        </div>
-        <div class="project-images" style="display: none;">
-            <div class="image-container">
-                <img src="/images/project2.jpg" alt="Project 2" class="active">
-                <img src="/images/project2-2.jpg" alt="Project 2 - Additional View" style="display: none;">
-                <img src="/images/project2-3.jpg" alt="Project 2 - Additional View" style="display: none;">
+        <div class="pd-source" hidden>
+            <div class="pd-images">
+                <img src="/images/projects/concurrent-http-server.png" alt="Dashboard: queue depth, worker pool status and live job feed">
+                <div class="pd-placeholder">more screenshots coming soon</div>
             </div>
-            <div class="image-navigation">
-                <button class="prev-image">←</button>
-                <div class="image-dots"></div>
-                <button class="next-image">→</button>
+            <div class="pd-text">
+                <p>
+                    A reference implementation of the worker-pool pattern in Go. Incoming HTTP
+                    requests are wrapped into tasks and pushed onto a buffered channel; a fixed
+                    pool of worker goroutines pulls tasks off that queue, so load is bounded and
+                    the server pushes back instead of falling over when it is saturated. Logging
+                    runs on its own goroutine so request handling never blocks on file I/O.
+                </p>
+                <p>
+                    A React and TypeScript dashboard connects over server-sent events and shows
+                    queue depth, which workers are busy and a live feed of jobs as they are
+                    processed.
+                </p>
+                <h4>Highlights</h4>
+                <ul>
+                    <li>Configurable pool of K worker goroutines (default 4) reading from one shared channel</li>
+                    <li>Buffered request queue with backpressure when it fills</li>
+                    <li>Dedicated asynchronous log writer fed by its own buffered channel</li>
+                    <li>Logging, CORS and panic-recovery middleware</li>
+                    <li>Server-sent events for real-time job notifications</li>
+                    <li>Health check and queue-status endpoints</li>
+                    <li>Graceful shutdown that drains both queues and stops the workers</li>
+                    <li>All settings (workers, buffer sizes, timeouts, port) via environment variables, with unit tests</li>
+                </ul>
+                <h4>Request flow</h4>
+                <pre>request -> middleware (log) -> queue -> worker -> response
+                                  \-> log channel -> log writer -> logs.txt
+                                  \-> SSE broadcast -> dashboard</pre>
+            </div>
+            <div class="pd-links">
+                <a href="https://go-http-server.fly.dev/" target="_blank" rel="noopener noreferrer">Live demo</a>
+                <a href="https://github.com/evan3v4n/Go-HTTP" target="_blank" rel="noopener noreferrer">GitHub</a>
             </div>
         </div>
-        <div class="project-links" style="display: none;">
-            <a href="https://github.com/yourusername/project2" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://project2-demo.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
-        </div>
-    </div>
+    </article>
 
-    <div class="project-card" data-project="3">
-        <h3 class="project-title">project_3.js</h3>
-        <div class="project-tech">
-            <span class="tech-tag">JavaScript</span>
-            <span class="tech-tag">Express</span>
-            <span class="tech-tag">MySQL</span>
+    <article class="project-tile" tabindex="0" role="button" aria-label="Open Persistent Latent-State LLM details">
+        <div class="window-bar" aria-hidden="true">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="window-title">~/projects/persistent-latent-state-llm</span>
         </div>
-        <div class="project-description-preview">
-            Features include user management, data visualization, and third-party API integration.
+        <div class="project-shot placeholder"><span>screenshot coming soon</span></div>
+        <div class="project-body">
+            <h3 class="project-name">Persistent Latent-State LLM</h3>
+            <ul class="tech-tags"><li>Python</li><li>MLX</li><li>PyTorch</li></ul>
+            <p>
+                An experimental transformer architecture with a recurrent latent state
+                that persists across inference calls, enabling non-tokenized memory and
+                iterative latent reasoning. I evaluated information persistence,
+                self-modeling, and affect-like modulation of model behavior.
+            </p>
+            <span class="more-hint">click for details &rarr;</span>
         </div>
-        <div class="project-description" style="display: none;">
-            This is a description of Project 3. It highlights my work with JavaScript, Express, and MySQL. The project features include user management, data visualization, and API integration.
-        </div>
-        <div class="project-images" style="display: none;">
-            <div class="image-container">
-                <img src="/images/photography/S+M.JPG" alt="Project 3" class="active">
-                <img src="/images/project3-2.jpg" alt="Project 3 - Additional View" style="display: none;">
-                <img src="/images/project3-3.jpg" alt="Project 3 - Additional View" style="display: none;">
-            </div>
-            <div class="image-navigation">
-                <button class="prev-image">←</button>
-                <div class="image-dots"></div>
-                <button class="next-image">→</button>
-            </div>
-        </div>
-        <div class="project-links" style="display: none;">
-            <a href="https://github.com/yourusername/project3" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://project3-demo.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
-        </div>
-    </div>
 
-    <div class="project-card" data-project="4">
-        <h3 class="project-title">project_4.js</h3>
-        <div class="project-tech">
-            <span class="tech-tag">JavaScript</span>
-            <span class="tech-tag">Express</span>
-            <span class="tech-tag">MySQL</span>
-        </div>
-        <div class="project-description-preview">
-            Full-stack application with interactive dashboards and real-time data updates.
-        </div>
-        <div class="project-description" style="display: none;">
-            This is a description of Project 4. It highlights my work with JavaScript, Express, and MySQL. The project features include user management, data visualization, and API integration.
-        </div>
-        <div class="project-images" style="display: none;">
-            <div class="image-container">
-                <img src="/images/project4.jpg" alt="Project 4" class="active">
-                <img src="/images/project4-2.jpg" alt="Project 4 - Additional View" style="display: none;">
-                <img src="/images/project4-3.jpg" alt="Project 4 - Additional View" style="display: none;">
+        <div class="pd-source" hidden>
+            <div class="pd-images">
+                <div class="pd-placeholder">screenshots coming soon</div>
             </div>
-            <div class="image-navigation">
-                <button class="prev-image">←</button>
-                <div class="image-dots"></div>
-                <button class="next-image">→</button>
+            <div class="pd-text">
+                <p>
+                    The question: can a language model carry a memory from one conversation to
+                    the next in a single number, with no text? After an interaction, a small
+                    value is read from the model's internal activations and the text is thrown
+                    away. In a later, unrelated interaction that value is written back into the
+                    model, and if the output shifts in a predictable way, the number carried
+                    information. The model's weights are never changed.
+                </p>
+                <h4>What I measured</h4>
+                <ul>
+                    <li>Whether the stored value can be read as a meaningful direction (sentiment), on held-out sentences</li>
+                    <li>Whether writing it into a later layer steers the next response, against random-direction controls</li>
+                    <li>Whether the effect fades after unrelated turns at a set rate</li>
+                    <li>Whether a small learned relay can hold a four-code memory across interactions</li>
+                </ul>
+                <h4>Results on Pythia models</h4>
+                <ul>
+                    <li>Sentiment direction held-out accuracy: 86% on pythia-160m, 98% on pythia-410m</li>
+                    <li>Steering effect of a stored value on a later prompt: +1.03 (160m) and +2.48 (410m), against about zero for a random direction</li>
+                    <li>The larger model passes all 9 persistence checks; the smaller passes 7 of 9</li>
+                    <li>Learned four-code memory: 100% held-out recall against 25% chance</li>
+                </ul>
+            </div>
+            <div class="pd-links">
+                <a href="https://github.com/evan3v4n/latent-relay" target="_blank" rel="noopener noreferrer">GitHub</a>
             </div>
         </div>
-        <div class="project-links" style="display: none;">
-            <a href="https://github.com/yourusername/project4" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://project4-demo.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
+    </article>
+
+    <article class="project-tile" tabindex="0" role="button" aria-label="Open GPU Artificial Life Simulator details">
+        <div class="window-bar" aria-hidden="true">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="window-title">~/projects/gpu-artificial-life</span>
         </div>
+        <div class="project-shot placeholder"><span>screenshot coming soon</span></div>
+        <div class="project-body">
+            <h3 class="project-name">GPU Artificial Life Simulator</h3>
+            <ul class="tech-tags"><li>Rust</li><li>wgpu</li><li>WGSL</li></ul>
+            <p>
+                A GPU-accelerated artificial-life simulator supporting thousands of
+                autonomous neural agents, with compute-shader inference, spatial
+                partitioning, genetic evolution and NEAT-based topology evolution for
+                emergent ecosystem simulation.
+            </p>
+            <span class="more-hint">click for details &rarr;</span>
+        </div>
+
+        <div class="pd-source" hidden>
+            <div class="pd-images">
+                <div class="pd-placeholder">screenshots coming soon</div>
+            </div>
+            <div class="pd-text">
+                <p>
+                    A simulation of a small ecosystem in which thousands of agents act on their
+                    own, each controlled by a neural network. The simulation runs on the GPU
+                    through wgpu: agent brains are evaluated in WGSL compute shaders, so the
+                    population can grow far beyond what a CPU loop handles in real time.
+                </p>
+                <h4>Highlights</h4>
+                <ul>
+                    <li>Thousands of autonomous agents, each with its own neural network</li>
+                    <li>Neural network inference in WGSL compute shaders</li>
+                    <li>Spatial partitioning so agents find their neighbours without checking everyone</li>
+                    <li>Genetic evolution of agent behaviour across generations</li>
+                    <li>NEAT-based evolution of network topology, not just weights</li>
+                    <li>Written in Rust</li>
+                </ul>
+            </div>
+        </div>
+    </article>
+</div>
+
+<div id="pdModal" class="pd-modal" role="dialog" aria-modal="true" aria-labelledby="pdTitle" hidden>
+    <div class="pd-panel">
+        <button class="pd-close" aria-label="Close details"><i class="fas fa-times"></i></button>
+        <h3 id="pdTitle" class="pd-title"></h3>
+        <ul class="tech-tags pd-tags"></ul>
+        <div class="pd-gallery"></div>
+        <div class="pd-content"></div>
+        <div class="pd-footer"></div>
     </div>
 </div>
 
-<script>
-    console.log('Projects template loaded');
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add CRT effect functionality
-        const scanlineEffect = document.createElement('div');
-        scanlineEffect.classList.add('crt-scanlines');
-        document.body.appendChild(scanlineEffect);
-        
-        console.log('Projects DOMContentLoaded event fired');
-        
-        // Initialize image carousels for each project
-        document.querySelectorAll('.project-card').forEach(card => {
-            const images = card.querySelectorAll('.image-container img');
-            const dotsContainer = card.querySelector('.image-dots');
-            const prevButton = card.querySelector('.prev-image');
-            const nextButton = card.querySelector('.next-image');
-            
-            // Create dots for each image
-            images.forEach((_, index) => {
-                const dot = document.createElement('span');
-                dot.classList.add('dot');
-                if (index === 0) dot.classList.add('active');
-                dotsContainer.appendChild(dot);
-            });
-            
-            const dots = card.querySelectorAll('.dot');
-            let currentImageIndex = 0;
-            
-            function showImage(index) {
-                images.forEach((img, i) => {
-                    img.style.display = i === index ? 'block' : 'none';
-                    img.classList.toggle('active', i === index);
-                });
-                
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-                
-                currentImageIndex = index;
-            }
-            
-            prevButton.addEventListener('click', () => {
-                const newIndex = (currentImageIndex - 1 + images.length) % images.length;
-                showImage(newIndex);
-            });
-            
-            nextButton.addEventListener('click', () => {
-                const newIndex = (currentImageIndex + 1) % images.length;
-                showImage(newIndex);
-            });
-            
-            dots.forEach((dot, index) => {
-                dot.addEventListener('click', () => showImage(index));
-            });
-        });
-    });
-</script>
-{{ end }} 
+<script src="/js/projects.js"></script>
+{{ end }}
