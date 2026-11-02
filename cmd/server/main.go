@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -48,6 +49,10 @@ type AlbumPageData struct {
 	Album Album
 }
 
+// Photo files are named "YYYY-MM-DD Caption.JPG": the date prefix orders the
+// gallery newest first and is stripped from the displayed caption.
+var datePrefix = regexp.MustCompile(`^(\d{4}-\d{2}-\d{2})\s+`)
+
 func getPhotographyImages(limit int) ([]Photo, error) {
 	photos := []Photo{}
 
@@ -72,19 +77,29 @@ func getPhotographyImages(limit int) ([]Photo, error) {
 				continue
 			}
 
+			caption := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
+			date := fileInfo.ModTime()
+			if m := datePrefix.FindStringSubmatch(caption); m != nil {
+				date, _ = time.Parse("2006-01-02", m[1])
+				caption = strings.TrimPrefix(caption, m[0])
+			}
+
 			photo := Photo{
 				URL:         "/images/photography/" + file.Name(),
-				Description: strings.TrimSuffix(file.Name(), filepath.Ext(file.Name())),
-				ModTime:     fileInfo.ModTime(),
+				Description: caption,
+				ModTime:     date,
 			}
 			photos = append(photos, photo)
 			log.Printf("Added photo: %+v", photo)
 		}
 	}
 
-	// Sort photos by modification time, most recent first
+	// Sort photos by date, most recent first
 	sort.Slice(photos, func(i, j int) bool {
-		return photos[i].ModTime.After(photos[j].ModTime)
+		if !photos[i].ModTime.Equal(photos[j].ModTime) {
+			return photos[i].ModTime.After(photos[j].ModTime)
+		}
+		return photos[i].Description < photos[j].Description
 	})
 
 	// Limit the number of photos if requested
