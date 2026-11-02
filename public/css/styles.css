@@ -942,3 +942,30 @@ main {
 .photo-item {
     cursor: pointer;
 } 
+/* Photography page: justified rows (each row fills the width, photos keep their aspect ratio) */
+.photo-grid.justified {
+    --row-height: 220px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    /* break out of the narrow text column so rows use the page width */
+    position: relative;
+    left: 50%;
+    width: min(1400px, calc(100vw - 40px));
+    transform: translateX(-50%);
+}
+
+.photo-grid.justified .photo-item {
+    aspect-ratio: var(--ar);
+    flex: calc(var(--ar) * 100) 1 calc(var(--ar) * var(--row-height));
+    border-radius: 4px;
+}
+
+.photo-grid.justified::after {
+    content: "";
+    flex-grow: 100000; /* keeps the last row from stretching */
+}
+
+@media (max-width: 600px) {
+    .photo-grid.justified { --row-height: 150px; gap: 6px; }
+}

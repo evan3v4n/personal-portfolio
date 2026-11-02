@@ -6,9 +6,9 @@
     </p>
 </section>
 
-<div class="photo-grid">
+<div class="photo-grid justified">
     {{range .Photos}}
-    <div class="photo-item">
+    <div class="photo-item" style="--ar: {{printf "%.4f" .Aspect}}">
         <img src="{{.URL}}" alt="{{.Description}}" loading="lazy" decoding="async">
         <div class="photo-overlay">
             <span class="photo-name">{{.Description}}</span>

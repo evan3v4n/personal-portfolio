@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"log"
 	"net/http"
 	"os"
@@ -34,6 +37,7 @@ type Photo struct {
 	URL         string
 	Description string
 	ModTime     time.Time
+	Aspect      float64 // width / height, for the justified-rows gallery
 }
 
 type Album struct {
@@ -52,6 +56,20 @@ type AlbumPageData struct {
 // Photo files are named "YYYY-MM-DD Caption.JPG": the date prefix orders the
 // gallery newest first and is stripped from the displayed caption.
 var datePrefix = regexp.MustCompile(`^(\d{4}-\d{2}-\d{2})\s+`)
+
+// imageAspect reads only the image header and returns width/height (1.5 if unreadable).
+func imageAspect(path string) float64 {
+	f, err := os.Open(path)
+	if err != nil {
+		return 1.5
+	}
+	defer f.Close()
+	cfg, _, err := image.DecodeConfig(f)
+	if err != nil || cfg.Height == 0 {
+		return 1.5
+	}
+	return float64(cfg.Width) / float64(cfg.Height)
+}
 
 func getPhotographyImages(limit int) ([]Photo, error) {
 	photos := []Photo{}
@@ -88,6 +106,7 @@ func getPhotographyImages(limit int) ([]Photo, error) {
 				URL:         "/images/photography/" + file.Name(),
 				Description: caption,
 				ModTime:     date,
+				Aspect:      imageAspect(filepath.Join("public/images/photography", file.Name())),
 			}
 			photos = append(photos, photo)
 			log.Printf("Added photo: %+v", photo)
