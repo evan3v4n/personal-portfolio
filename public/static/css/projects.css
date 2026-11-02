@@ -1,0 +1,382 @@
+/* Terminal-style Projects Layout */
+.projects-intro {
+    margin-bottom: 30px;
+}
+
+.section-description {
+    position: relative;
+    color: var(--text-color);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 20px;
+}
+
+/* Norton Commander / DOS Style File Selector */
+.projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1000px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 40px;
+    position: relative;
+}
+
+.project-card {
+    cursor: pointer;
+    background-color: var(--secondary-color);
+    margin-bottom: 0;
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+    border: 1px solid var(--muted-color);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 10px rgba(152, 187, 108, 0.3);
+}
+
+.project-title {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--highlight-color);
+    padding: 8px 12px;
+    background-color: var(--primary-color);
+    border-bottom: 1px solid var(--muted-color);
+    font-weight: normal;
+}
+
+.project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 12px 12px 8px;
+    justify-content: flex-start;
+    font-weight: bold;
+}
+
+.project-description-preview {
+    padding: 0 12px 12px;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    opacity: 0.8;
+    border-top: 1px dashed var(--muted-color);
+    margin-top: 8px;
+}
+
+.tech-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: var(--primary-color);
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    border: none;
+}
+
+.tech-tag::before {
+    content: '[';
+}
+
+.tech-tag::after {
+    content: ']';
+}
+
+/* Blinking cursor effect */
+.projects-intro .section-description::after {
+    content: '|';
+    display: inline-block;
+    animation: cursor-blink 1s step-end infinite;
+    margin-left: 4px;
+    color: var(--highlight-color);
+}
+
+@keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* CRT screen effect for the whole page */
+main::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.2;
+}
+
+/* CRT Scanlines */
+.crt-scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1001;
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.project-modal-content {
+    background-color: var(--primary-color);
+    padding: 0;
+    border: 1px solid var(--text-color);
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-color);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    animation: terminal-open 0.2s ease-out;
+}
+
+@keyframes terminal-open {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Terminal header styles */
+.terminal-header {
+    background-color: var(--secondary-color);
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--muted-color);
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.terminal-title {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    text-align: center;
+    width: 100%;
+}
+
+.modal-close {
+    position: relative;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--error-color);
+    font-family: 'JetBrains Mono', monospace;
+    z-index: 20;
+}
+
+.modal-close:after {
+    content: '×';
+}
+
+.modal-close:hover:after {
+    color: var(--highlight-color);
+}
+
+.project-modal-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--muted-color);
+    padding: 0 2rem 0.5rem;
+    position: relative;
+}
+
+.project-modal-header::before {
+    content: '> ./view_project.sh';
+    display: block;
+    color: var(--highlight-color);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.project-modal-header .modal-title {
+    color: var(--highlight-color);
+    text-transform: lowercase;
+    font-weight: normal;
+    font-size: 1.5rem;
+    position: relative;
+}
+
+.project-modal-body {
+    padding: 0 2rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.project-modal-image {
+    order: -1;
+}
+
+.project-modal-image img {
+    width: 100%;
+    height: auto;
+    border: 1px dashed var(--muted-color);
+    filter: grayscale(20%) contrast(90%) brightness(80%);
+}
+
+.project-modal-image::before {
+    content: '$ display image.jpg';
+    display: block;
+    color: var(--highlight-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.modal-description {
+    position: relative;
+    line-height: 1.6;
+    padding-left: 1rem;
+    border-left: 2px solid var(--muted-color);
+    color: var(--text-color);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.modal-description::before {
+    content: '$ cat README.md';
+    display: block;
+    color: var(--highlight-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    margin-left: -1rem;
+    border-left: none;
+}
+
+.modal-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-top: 1.5rem;
+}
+
+.modal-tech::before {
+    content: '$ get-tech-stack';
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--highlight-color);
+    font-size: 0.8rem;
+}
+
+.modal-tech .tech-tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.modal-links {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    padding-top: 1.5rem;
+}
+
+.modal-links::before {
+    content: '$ open-links';
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--highlight-color);
+    font-size: 0.8rem;
+}
+
+.modal-links a {
+    display: inline-block;
+    color: var(--primary-color);
+    background-color: var(--accent-color);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.modal-links a:hover {
+    background-color: var(--highlight-color);
+}
+
+.modal-links a::before {
+    content: '$';
+    margin-right: 0.5rem;
+}
+
+/* CRT screen effect for modal */
+.project-modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Console image */
+.console-image {
+    image-rendering: pixelated;
+}
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .project-modal-body {
+        grid-template-columns: 1fr;
+    }
+} 

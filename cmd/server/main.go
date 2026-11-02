@@ -1,199 +1,248 @@
 package main
 
 import (
-	"bytes"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
-
-const (
-	photoDir    = "public/images/photography"
-	templateDir = "public/templates"
-)
-
-// Photo filenames look like "2026-01-10 Some caption.JPG": the date prefix
-// orders the gallery and is stripped from the displayed caption.
-var datePrefix = regexp.MustCompile(`^(\d{4}-\d{2}-\d{2})\s+`)
-
-type RequestInfo struct {
-	Method        string
-	URL           string
-	Protocol      string
-	Host          string
-	Status        string
-	ContentType   string
-	LastModified  string
-	ContentLength int
-	Date          string
-}
 
 type PageData struct {
 	CurrentPage string
 	Title       string
 	Photos      []Photo
-	RequestInfo RequestInfo
+	RequestInfo struct {
+		Method        string
+		URL           string
+		Protocol      string
+		Host          string
+		ContentType   string
+		LastModified  string
+		ContentLength int64
+		Date          string
+		UserAgent     string
+	}
 }
 
 type Photo struct {
 	URL         string
 	Description string
-	Date        time.Time
+	ModTime     time.Time
 }
 
-type page struct {
-	name  string
-	title string
-	tmpl  *template.Template
-	mtime time.Time
+type Album struct {
+	Title       string
+	Description string
+	Date        string
+	CoverImage  string
+	Photos      []Photo
 }
 
-func loadPage(name, title, file string) *page {
-	paths := []string{
-		filepath.Join(templateDir, "base.html"),
-		filepath.Join(templateDir, "nav.html"),
-		filepath.Join(templateDir, file),
-	}
-	newest := time.Time{}
-	for _, p := range paths {
-		if info, err := os.Stat(p); err == nil && info.ModTime().After(newest) {
-			newest = info.ModTime()
-		}
-	}
-	return &page{name: name, title: title, tmpl: template.Must(template.ParseFiles(paths...)), mtime: newest}
+type AlbumPageData struct {
+	PageData
+	Album Album
 }
 
 func getPhotographyImages(limit int) ([]Photo, error) {
-	files, err := os.ReadDir(photoDir)
+	photos := []Photo{}
+
+	// Read the photography directory
+	files, err := os.ReadDir("public/images/photography")
 	if err != nil {
+		log.Printf("Error reading photography directory: %v", err)
 		return nil, err
 	}
 
-	photos := []Photo{}
+	log.Printf("Found %d files in photography directory", len(files))
+
+	// Add each image to the photos slice
 	for _, file := range files {
-		ext := strings.ToLower(filepath.Ext(file.Name()))
-		if file.IsDir() || (ext != ".jpg" && ext != ".jpeg" && ext != ".png") {
-			continue
-		}
+		// Convert filename to lowercase for extension check
+		lowerName := strings.ToLower(file.Name())
+		if !file.IsDir() && (strings.HasSuffix(lowerName, ".jpg") || strings.HasSuffix(lowerName, ".jpeg") || strings.HasSuffix(lowerName, ".png")) {
+			// Get file info to get modification time
+			fileInfo, err := file.Info()
+			if err != nil {
+				log.Printf("Error getting file info for %s: %v", file.Name(), err)
+				continue
+			}
 
-		caption := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
-		var date time.Time
-		if m := datePrefix.FindStringSubmatch(caption); m != nil {
-			date, _ = time.Parse("2006-01-02", m[1])
-			caption = strings.TrimPrefix(caption, m[0])
+			photo := Photo{
+				URL:         "/images/photography/" + file.Name(),
+				Description: strings.TrimSuffix(file.Name(), filepath.Ext(file.Name())),
+				ModTime:     fileInfo.ModTime(),
+			}
+			photos = append(photos, photo)
+			log.Printf("Added photo: %+v", photo)
 		}
-
-		photos = append(photos, Photo{
-			URL:         "/images/photography/" + file.Name(),
-			Description: caption,
-			Date:        date,
-		})
 	}
 
-	// Newest first; undated photos sink to the bottom, ties break by caption.
+	// Sort photos by modification time, most recent first
 	sort.Slice(photos, func(i, j int) bool {
-		if !photos[i].Date.Equal(photos[j].Date) {
-			return photos[i].Date.After(photos[j].Date)
-		}
-		return photos[i].Description < photos[j].Description
+		return photos[i].ModTime.After(photos[j].ModTime)
 	})
 
+	// Limit the number of photos if requested
 	if limit > 0 && len(photos) > limit {
 		photos = photos[:limit]
 	}
+
+	log.Printf("Total photos returned: %d", len(photos))
 	return photos, nil
 }
 
 func main() {
-	pages := map[string]*page{
-		"/":            loadPage("home", "Home", "home.html"),
-		"/photography": loadPage("photography", "Photography", "photography.html"),
-	}
-	notFound := loadPage("404", "Not Found", "404.html")
+	// Parse templates
+	templates := template.Must(template.ParseGlob("public/templates/*.html"))
 
+	// Create a new file server handler
 	fs := http.FileServer(http.Dir("public"))
+
+	// Create a new ServeMux for routing
 	mux := http.NewServeMux()
+
+	// Handle static files
 	mux.Handle("/css/", fs)
 	mux.Handle("/js/", fs)
 	mux.Handle("/images/", fs)
 	mux.Handle("/favicon.ico", fs)
-	mux.Handle("/robots.txt", fs)
 
+	// Handle all other requests
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet && r.Method != http.MethodHead {
-			w.Header().Set("Allow", "GET, HEAD")
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		// Set custom headers for all responses
+		w.Header().Set("Server", "Personal Portfolio")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("X-XSS-Protection", "1; mode=block")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+		// Get the response body size (approximate)
+		var contentLength int64 = 0
+		if r.Method == "GET" {
+			// For GET requests, we can estimate the content length
+			contentLength = 4263 // Approximate size of the HTML response
+		}
+
+		// Get current time in UTC
+		now := time.Now().UTC()
+
+		// Create request info
+		requestInfo := struct {
+			Method        string
+			URL           string
+			Protocol      string
+			Host          string
+			ContentType   string
+			LastModified  string
+			ContentLength int64
+			Date          string
+			UserAgent     string
+		}{
+			Method:        r.Method,
+			URL:           r.URL.Path,
+			Protocol:      r.Proto,
+			Host:          r.Host,
+			ContentType:   w.Header().Get("Content-Type"),
+			LastModified:  now.Format(time.RFC3339),
+			ContentLength: contentLength,
+			Date:          now.Format(time.RFC3339),
+			UserAgent:     r.UserAgent(),
+		}
+
+		// Log the request
+		log.Printf("%s %s %s", r.Method, r.URL.Path, r.Proto)
+
+		// Determine current page
+		currentPage := "home"
+		if r.URL.Path != "/" {
+			// Remove leading slash and split by remaining slashes
+			parts := strings.Split(strings.TrimPrefix(r.URL.Path, "/"), "/")
+			if len(parts[0]) > 0 {
+				currentPage = parts[0]
+			}
+
+			// Handle album routes
+			if currentPage == "albums" && len(parts) > 1 {
+				// This is a specific album page
+				albumID := parts[1]
+				album := Album{
+					Title:       "Album Title",
+					Description: "Album Description",
+					Photos: []Photo{
+						{URL: "/images/albums/" + albumID + "/1.jpg", Description: "Photo 1"},
+						{URL: "/images/albums/" + albumID + "/2.jpg", Description: "Photo 2"},
+						{URL: "/images/albums/" + albumID + "/3.jpg", Description: "Photo 3"},
+					},
+				}
+
+				data := AlbumPageData{
+					PageData: PageData{
+						CurrentPage: "albums",
+						Title:       album.Title + " - Portfolio",
+						RequestInfo: requestInfo,
+					},
+					Album: album,
+				}
+
+				err := templates.ExecuteTemplate(w, "base.html", data)
+				if err != nil {
+					log.Printf("Error executing template: %v", err)
+					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				}
+				return
+			}
+		}
+
+		// Get photography images
+		var photos []Photo
+		var err error
+		if currentPage == "home" {
+			photos, err = getPhotographyImages(3) // Only 3 most recent for home page
+		} else {
+			photos, err = getPhotographyImages(0) // All photos for photography page
+		}
+		if err != nil {
+			log.Printf("Error reading photography images: %v", err)
+		} else {
+			log.Printf("Successfully loaded %d photos for page: %s", len(photos), currentPage)
+		}
+
+		// Create page data
+		data := PageData{
+			CurrentPage: currentPage,
+			Title:       strings.Title(currentPage) + " - Portfolio",
+			Photos:      photos,
+			RequestInfo: requestInfo,
+		}
+
+		// Parse the specific page template
+		pageTemplate := fmt.Sprintf("%s.html", currentPage)
+		tmpl, err := template.ParseFiles(
+			"public/templates/base.html",
+			"public/templates/nav.html",
+			fmt.Sprintf("public/templates/%s", pageTemplate),
+		)
+		if err != nil {
+			log.Printf("Error parsing templates: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		path := strings.TrimSuffix(r.URL.Path, "/")
-		if path == "" {
-			path = "/"
-		}
-		pg, ok := pages[path]
-		status := http.StatusOK
-		if !ok {
-			pg, status = notFound, http.StatusNotFound
-		}
-
-		var photos []Photo
-		switch pg.name {
-		case "home":
-			photos, _ = getPhotographyImages(3)
-		case "photography":
-			var err error
-			if photos, err = getPhotographyImages(0); err != nil {
-				log.Printf("reading photos: %v", err)
-			}
-		}
-
-		info := RequestInfo{
-			Method:       r.Method,
-			URL:          r.URL.Path,
-			Protocol:     r.Proto,
-			Host:         r.Host,
-			Status:       strconv.Itoa(status) + " " + http.StatusText(status),
-			ContentType:  "text/html; charset=utf-8",
-			LastModified: pg.mtime.UTC().Format(http.TimeFormat),
-			Date:         time.Now().UTC().Format(http.TimeFormat),
-		}
-		data := PageData{CurrentPage: pg.name, Title: pg.title + " - Evan Scott", Photos: photos, RequestInfo: info}
-
-		// The header bar shows the page's own Content-Length, so render until
-		// the number it displays matches the size of the result.
-		var buf bytes.Buffer
-		for i := 0; i < 3; i++ {
-			buf.Reset()
-			if err := pg.tmpl.ExecuteTemplate(&buf, "base.html", data); err != nil {
-				log.Printf("rendering %s: %v", pg.name, err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-			if buf.Len() == data.RequestInfo.ContentLength {
-				break
-			}
-			data.RequestInfo.ContentLength = buf.Len()
-		}
-
-		h := w.Header()
-		h.Set("Content-Type", info.ContentType)
-		h.Set("Content-Length", strconv.Itoa(buf.Len()))
-		h.Set("Last-Modified", info.LastModified)
-		h.Set("X-Content-Type-Options", "nosniff")
-		h.Set("X-Frame-Options", "DENY")
-		w.WriteHeader(status)
-		if r.Method == http.MethodGet {
-			w.Write(buf.Bytes())
+		// Execute template
+		err = tmpl.ExecuteTemplate(w, "base.html", data)
+		if err != nil {
+			log.Printf("Error executing template: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
 		}
 	})
 
+	// Create server with timeouts
 	server := &http.Server{
 		Addr:         ":" + getPort(),
 		Handler:      mux,
@@ -202,13 +251,16 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	log.Printf("Server starting on http://localhost:%s", getPort())
-	log.Fatal(server.ListenAndServe())
+	log.Printf("Server starting on http://localhost:8080")
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getPort() string {
-	if port := os.Getenv("PORT"); port != "" {
-		return port
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback for local dev
 	}
-	return "8080" // fallback for local dev
+	return port
 }
